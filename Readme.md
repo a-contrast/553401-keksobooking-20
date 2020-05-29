@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [ALEXEY ZDOROVENKO](https://up.htmlacademy.ru/javascript/20/user/553401).
-* Наставник: `Неизвестно`.
+* Наставник: [АНДРЕЙ ЛУТОГИН](https://htmlacademy.ru/profile/id1096725).
 
 ---
 
