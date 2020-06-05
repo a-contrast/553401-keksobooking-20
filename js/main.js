@@ -18,6 +18,8 @@ var DESCRIPTION = ['Описание 1', 'Описание 2', 'Описание
 var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
 var map = document.querySelector('.map'); // находим блок с картой
+var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin'); // находим шаблон метки которую будем вставлять
 var objects = []; // наш массив объектов с данными, который мы будем заполнять
 
 map.classList.remove('map--faded'); // временное решение (по заданию)
@@ -57,8 +59,8 @@ function getRandomSliceArray(array) {
  * @return {object}
  */
 function getObject(i) {
-  var x = getRandomInRange(0, 600);
-  var y = getRandomInRange(130, 630);
+  var locationX = getRandomInRange(0, map.offsetWidth); // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка.
+  var locationY = getRandomInRange(130, 630); // "y": случайное число, координата y метки на карте от 130 до 630.
 
   return {
     author: {
@@ -67,7 +69,7 @@ function getObject(i) {
 
     offer: {
       title: getRandomFromArray(TITLES), // строка, заголовок предложения
-      address: x + ', ' + y, // строка, адрес предложения
+      address: locationX + ', ' + locationY, // строка, адрес предложения
       price: getRandomInRange(1, 50000), // число, стоимость
       type: getRandomFromArray(TYPES), // palace, flat, house или bungalo
       rooms: getRandomFromArray(ROOMS), // число, количество комнат
@@ -79,10 +81,11 @@ function getObject(i) {
       photos: getRandomSliceArray(PHOTOS) // массив строк случайной длины, содержащий адреса фотографий
     },
 
+    // координаты пина
     location: {
-      x: x,
-      y: y
-    } // "x": случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка. "y": случайное число, координата y метки на карте от 130 до 630.
+      x: locationX,
+      y: locationY
+    }
   };
 }
 
@@ -98,4 +101,38 @@ function getObjectsArray(arrayLength) {
   return objects;
 }
 
-objects = getObjectsArray(8);
+objects = getObjectsArray(8); // получаем массив из созданных объектов
+
+/**
+ * Обозначает отображение Pin-а
+ * @param {object} object - объект из которого будут браться данные для отображения Pin-а
+ * @return {object}
+ */
+function renderPin(object) {
+  var pin = pinTemplate.cloneNode(true);
+
+  // положение пина с учетом его размеров
+  pin.style.left = object.location.x + pin.offsetWidth / 2 + 'px';
+  pin.style.top = object.location.y + pin.offsetHeight + 'px';
+
+  // берем из нашего объекта данные для img
+  pin.querySelector('img').src = object.author.avatar;
+  pin.querySelector('img').alt = object.title;
+
+  return pin;
+}
+
+// отображаем наши пины
+function renderPinsToMap() {
+  var fragment = document.createDocumentFragment();
+
+  // для начала отрендерим их во fragment
+  for (var i = 0; i < objects.length; i++) {
+    fragment.appendChild(renderPin(objects[i]));
+  }
+
+  // теперь fragment отобразим на странице
+  pinsBlock.appendChild(fragment);
+}
+
+renderPinsToMap();
