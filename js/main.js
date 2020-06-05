@@ -59,8 +59,9 @@ function getRandomSliceArray(array) {
  * @return {object}
  */
 function getObject(i) {
-  var locationX = getRandomInRange(0, map.offsetWidth); // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка.
-  var locationY = getRandomInRange(130, 630); // "y": случайное число, координата y метки на карте от 130 до 630.
+  // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка, "y": случайное число, координата y метки на карте от 130 до 630.
+  var location = {x: getRandomInRange(0, map.offsetWidth), y: getRandomInRange(130, 630)};
+  var time = getRandomFromArray(TIMES); // одно из трёх фиксированных значений: 12:00, 13:00 или 14:00
 
   return {
     author: {
@@ -69,13 +70,13 @@ function getObject(i) {
 
     offer: {
       title: getRandomFromArray(TITLES), // строка, заголовок предложения
-      address: locationX + ', ' + locationY, // строка, адрес предложения
+      address: location.x + ', ' + location.y, // строка, адрес предложения
       price: getRandomInRange(1, 50000), // число, стоимость
       type: getRandomFromArray(TYPES), // palace, flat, house или bungalo
       rooms: getRandomFromArray(ROOMS), // число, количество комнат
       guests: getRandomFromArray(GUESTS), // число, количество гостей, которое можно разместить
-      checkin: getRandomFromArray(TIMES), // строка с одним из трёх фиксированных значений: 12:00, 13:00 или 14:00
-      checkout: getRandomFromArray(TIMES), // строка с одним из трёх фиксированных значений: 12:00, 13:00 или 14:00
+      checkin: time, // строка с одним из трёх фиксированных значений: 12:00, 13:00 или 14:00
+      checkout: time, // строка с одним из трёх фиксированных значений: 12:00, 13:00 или 14:00
       features: getRandomSliceArray(FEATURES), // массив строк случайной длины из ниже предложенных: "wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"
       description: getRandomFromArray(DESCRIPTION), // строка с описанием
       photos: getRandomSliceArray(PHOTOS) // массив строк случайной длины, содержащий адреса фотографий
@@ -83,8 +84,8 @@ function getObject(i) {
 
     // координаты пина
     location: {
-      x: locationX,
-      y: locationY
+      x: location.x,
+      y: location.y
     }
   };
 }
@@ -122,7 +123,7 @@ function renderPin(object) {
   return pin;
 }
 
-// отображаем наши пины
+// отображает наши пины на странице
 function renderPinsToMap() {
   var fragment = document.createDocumentFragment();
 
