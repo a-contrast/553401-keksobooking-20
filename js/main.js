@@ -1,7 +1,16 @@
 'use strict';
 
 // заголовок предложения
-var TITLES = ['Заголовок 1', 'Заголовок 2', 'Заголовок 3', 'Заголовок 4', 'Заголовок 5', 'Заголовок 6', 'Заголовок 7', 'Заголовок 8'];
+var TITLES = [
+  'Заголовок 1',
+  'Заголовок 2',
+  'Заголовок 3',
+  'Заголовок 4',
+  'Заголовок 5',
+  'Заголовок 6',
+  'Заголовок 7',
+  'Заголовок 8'
+];
 // тип жилья
 var TYPES = ['palace', 'flat', 'house', 'bungalo'];
 // количество комнат
@@ -11,18 +20,45 @@ var GUESTS = [0, 1, 2];
 // время заезда/выезда
 var TIMES = ['12:00', '13:00', '14:00'];
 // дополнительные критерии
-var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
+var FEATURES = [
+  'wifi',
+  'dishwasher',
+  'parking',
+  'washer',
+  'elevator',
+  'conditioner'
+];
 // описание жилья
-var DESCRIPTION = ['Описание 1', 'Описание 2', 'Описание 3', 'Описание 4', 'Описание 5', 'Описание 6', 'Описание 7', 'Описание 8'];
+var DESCRIPTION = [
+  'Описание 1',
+  'Описание 2',
+  'Описание 3',
+  'Описание 4',
+  'Описание 5',
+  'Описание 6',
+  'Описание 7',
+  'Описание 8'
+];
 // фотографии
-var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
+var PHOTOS = [
+  'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
+  'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
+];
 
 var map = document.querySelector('.map'); // находим блок с картой
-var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять
+var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять наши метки
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin'); // находим шаблон метки которую будем вставлять
-var objects = []; // наш массив объектов с данными, который мы будем заполнять
+var objects = []; // наш массив объектов с данными, который мы будем заполнять полученными объектами
 
-map.classList.remove('map--faded'); // временное решение (по заданию)
+// делаем блок видимым
+function mapToggle() {
+  if (map.classList.contains('map--faded')) {
+    map.classList.remove('map--faded');
+  } else {
+    map.classList.add('map--faded');
+  }
+}
 
 /**
  * Возвращает случайное число
@@ -61,32 +97,28 @@ function getRandomSliceArray(array) {
 function getObject(i) {
   // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка, "y": случайное число, координата y метки на карте от 130 до 630.
   var location = {x: getRandomInRange(0, map.offsetWidth), y: getRandomInRange(130, 630)};
-  var time = getRandomFromArray(TIMES); // одно из трёх фиксированных значений: 12:00, 13:00 или 14:00
+  var time = getRandomFromArray(TIMES);
 
   return {
     author: {
-      avatar: 'img/avatars/user0' + i + '.png' // строка, адрес изображения
+      avatar: 'img/avatars/user0' + i + '.png'
     },
 
     offer: {
-      title: getRandomFromArray(TITLES), // строка, заголовок предложения
-      address: location.x + ', ' + location.y, // строка, адрес предложения
-      price: getRandomInRange(1, 50000), // число, стоимость
-      type: getRandomFromArray(TYPES), // palace, flat, house или bungalo
-      rooms: getRandomFromArray(ROOMS), // число, количество комнат
-      guests: getRandomFromArray(GUESTS), // число, количество гостей, которое можно разместить
-      checkin: time, // строка с одним из трёх фиксированных значений: 12:00, 13:00 или 14:00
-      checkout: time, // строка с одним из трёх фиксированных значений: 12:00, 13:00 или 14:00
-      features: getRandomSliceArray(FEATURES), // массив строк случайной длины из ниже предложенных: "wifi", "dishwasher", "parking", "washer", "elevator", "conditioner"
-      description: getRandomFromArray(DESCRIPTION), // строка с описанием
-      photos: getRandomSliceArray(PHOTOS) // массив строк случайной длины, содержащий адреса фотографий
+      title: getRandomFromArray(TITLES),
+      address: location.x + ', ' + location.y,
+      price: getRandomInRange(1, 50000),
+      type: getRandomFromArray(TYPES),
+      rooms: getRandomFromArray(ROOMS),
+      guests: getRandomFromArray(GUESTS),
+      checkin: time,
+      checkout: time,
+      features: getRandomSliceArray(FEATURES),
+      description: getRandomFromArray(DESCRIPTION),
+      photos: getRandomSliceArray(PHOTOS)
     },
 
-    // координаты пина
-    location: {
-      x: location.x,
-      y: location.y
-    }
+    location: location
   };
 }
 
@@ -101,8 +133,6 @@ function getObjectsArray(arrayLength) {
   }
   return objects;
 }
-
-objects = getObjectsArray(8); // получаем массив из созданных объектов
 
 /**
  * Обозначает отображение Pin-а
@@ -123,17 +153,22 @@ function renderPin(object) {
   return pin;
 }
 
-// отображает наши пины на странице
-function renderPinsToMap() {
+/**
+ * отображает наши пины на странице
+ * @param {object} array - массив с объектами из которых берутся данные для пинов
+ */
+function renderPinsToMap(array) {
   var fragment = document.createDocumentFragment();
 
   // для начала отрендерим их во fragment
-  for (var i = 0; i < objects.length; i++) {
-    fragment.appendChild(renderPin(objects[i]));
+  for (var i = 0; i < array.length; i++) {
+    fragment.appendChild(renderPin(array[i]));
   }
 
   // теперь fragment отобразим на странице
   pinsBlock.appendChild(fragment);
 }
 
-renderPinsToMap();
+objects = getObjectsArray(8); // получаем массив из созданных объектов
+mapToggle(); // делаем блок .map видимым
+renderPinsToMap(objects); // отрисовываем пины
