@@ -49,7 +49,6 @@ var PHOTOS = [
 var map = document.querySelector('.map'); // находим блок с картой
 var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять наши метки
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin'); // находим шаблон метки которую будем вставлять
-var objects = []; // наш массив объектов с данными, который мы будем заполнять полученными объектами
 
 // делаем блок видимым
 function mapToggle() {
@@ -91,17 +90,16 @@ function getRandomSliceArray(array) {
 
 /**
  * Возвращает созданный объект с данными
- * @param {number} i - назначается в getObjectsArray
  * @return {object}
  */
-function getObject(i) {
+function getObject() {
   // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка, "y": случайное число, координата y метки на карте от 130 до 630.
   var location = {x: getRandomInRange(0, map.offsetWidth), y: getRandomInRange(130, 630)};
   var time = getRandomFromArray(TIMES);
 
   return {
     author: {
-      avatar: 'img/avatars/user0' + i + '.png'
+      avatar: ''
     },
 
     offer: {
@@ -128,10 +126,15 @@ function getObject(i) {
  * @return {object}
  */
 function getObjectsArray(arrayLength) {
+  var mapObjects = []; // наш массив объектов с данными, который мы будем заполнять полученными объектами
+
   for (var i = 1; i <= arrayLength; i++) {
-    objects.push(getObject(i));
+    var mapObject = getObject();
+    mapObject.author.avatar = 'img/avatars/user0' + i + '.png';
+    mapObjects.push(mapObject);
   }
-  return objects;
+
+  return mapObjects;
 }
 
 /**
@@ -169,6 +172,6 @@ function renderPinsToMap(array) {
   pinsBlock.appendChild(fragment);
 }
 
-objects = getObjectsArray(8); // получаем массив из созданных объектов
+var mapObjects = getObjectsArray(8); // получаем массив из созданных объектов
 mapToggle(); // делаем блок .map видимым
-renderPinsToMap(objects); // отрисовываем пины
+renderPinsToMap(mapObjects); // отрисовываем пины
