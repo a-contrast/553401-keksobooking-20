@@ -256,33 +256,15 @@ function renderCard(object) {
   return card;
 }
 
-// создает и возвращает блок для отображения карточек
-function makeMapCardsBlock() {
-  var cardsBlock;
-  beforeCardsBlock.insertAdjacentHTML('beforebegin', '<div class="map__cards"></div>');
-  cardsBlock = document.querySelector('.map__cards');
-
-  return cardsBlock;
-}
-
 /**
- * отображает карточки на странице
- * @param {object} array - массив с рандомными объектами
+ * отображает карточку жилья на странице
+ * @param {object} cardObject - объект для отображения карточки
  */
-function renderCardsToPin(array) {
-  var fragment = document.createDocumentFragment();
-
-  // для начала отрендерим их во fragment
-  for (var i = 0; i < array.length; i++) {
-    fragment.appendChild(renderCard(array[i]));
-  }
-
-  // теперь fragment отобразим на странице
-  cardsBlock.appendChild(fragment);
+function renderCardsToMap(cardObject) {
+  beforeCardsBlock.before(renderCard(cardObject));
 }
 
 var mapObjects = getObjectsArray(8); // получаем массив из созданных объектов
-var cardsBlock = makeMapCardsBlock(); // создаем блок для отображения карточек
 mapToggle(); // делаем блок .map видимым
 renderPinsToMap(mapObjects); // отрисовываем пины
-renderCardsToPin(mapObjects); // отрисовываем карточки
+renderCardsToMap(mapObjects[0]); // отрисовываем карточку жилья
