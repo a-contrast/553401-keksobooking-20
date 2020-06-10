@@ -30,14 +30,14 @@ var FEATURES = [
 ];
 // описание жилья
 var DESCRIPTION = [
-  // 'Описание 1',
-  // 'Описание 2',
-  // 'Описание 3',
-  // 'Описание 4',
-  // 'Описание 5',
-  // 'Описание 6',
-  // 'Описание 7',
-  // 'Описание 8'
+  'Описание 1',
+  'Описание 2',
+  'Описание 3',
+  'Описание 4',
+  'Описание 5',
+  'Описание 6',
+  'Описание 7',
+  'Описание 8'
 ];
 // фотографии
 var PHOTOS = [
@@ -223,19 +223,19 @@ function renderCard(object) {
   // возвращает тип жилья
   function popupType() {
     var type;
-
-    if (object.offer.type === 'flat') {
-      type = 'Квартира';
-    } else {
-      if (object.offer.type === 'bungalo') {
+    switch (object.offer.type) {
+      case 'flat':
+        type = 'Квартира';
+        break;
+      case 'bungalo':
         type = 'Бунгало';
-      } else {
-        if (object.offer.type === 'house') {
-          type = 'Дом';
-        } else {
-          type = 'Дворец';
-        }
-      }
+        break;
+      case 'house':
+        type = 'Дом';
+        break;
+      case 'palace':
+        type = 'Дворец';
+        break;
     }
 
     return type;
