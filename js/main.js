@@ -45,14 +45,64 @@ var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
+// объект со значениями ключей соотв. roomNumber.value и значений соотв. capacity.value
+var roomsToCapacity = {
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0']
+};
+// минимальная длина заголовка
+var MIN_TITLE_LENGTH = 30;
+// максимальная длина заголовка
+var MAX_TITLE_LENGTH = 100;
+
 
 var map = document.querySelector('.map'); // находим блок с картой
 var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять наши метки
 // var beforeCardsBlock = document.querySelector('.map__filters-container'); // ПЕРЕД этим блоком вставим наши карточки
-// находим шаблон метки которую будем вставлять
-var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
-// находим шаблон карточки которую будем вставлять
-// var cardTemplate = document.querySelector('#card').content.querySelector('.map__card');
+var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin'); // находим шаблон метки которую будем вставлять
+// var cardTemplate = document.querySelector('#card').content.querySelector('.map__card'); // находим шаблон карточки которую будем вставлять
+var pinMain = map.querySelector('.map__pin--main'); // главный пин
+var form = document.querySelector('.ad-form'); // форма для нашего объявления
+var formFieldsets = form.querySelectorAll('fieldset'); // находим ВЕ fieldset-ы в форме
+var addressInput = form.querySelector('#address'); // поле с адресом
+var title = form.querySelector('#title'); // поле для написания заголовка
+var typeOfRent = form.querySelector('#type'); // поле с типом жилья
+var priceOfRent = form.querySelector('#price'); // поле с ценой
+var timeIn = form.querySelector('#timein'); // select со временем заезда
+var timeOut = form.querySelector('#timeout'); // select со временем выезда
+var roomNumber = form.querySelector('#room_number'); // select с количеством комнат
+var capacity = form.querySelector('#capacity'); // select с количеством гостей
+var features = form.querySelector('.features'); // блок с чекбоксами
+var formReset = form.querySelector('.ad-form__reset'); // кнопка сброса формы
+// запишем значения по дефолту
+var titleDefault = title.value;
+var typeOfRentDefault = typeOfRent.value;
+var priceOfRentDefault = priceOfRent.value;
+var timeInDefault = timeIn.value;
+var timeOutDefault = timeOut.value;
+var roomNumberDefault = roomNumber.value;
+var capacityDefault = capacity.value;
+
+// устанавливает значения по дефолту
+function setDefaultValues() {
+  title.value = titleDefault;
+  typeOfRent.value = typeOfRentDefault;
+  priceOfRent.value = priceOfRentDefault;
+  timeIn.value = timeInDefault;
+  timeOut.value = timeOutDefault;
+  roomNumber.value = roomNumberDefault;
+  capacity.value = capacityDefault;
+}
+
+// устанавливает дефолтные значения для чекбоксов блока features
+function setDefaultFeatures() {
+  var featuresArray = features.querySelectorAll('input');
+  for (var i = 0; i < featuresArray.length; i++) {
+    featuresArray[i].checked = false;
+  }
+}
 
 /**
  * Возвращает случайное число
@@ -166,7 +216,7 @@ function renderPinsToMap(array) {
   pinsBlock.appendChild(fragment);
 }
 
-// удаляем со страницы все элементы, кроме первого (элемент 0), в наших целях, в нем находится главный пин
+// удаляем со страницы все элементы, кроме первого (элемент 0). (В нашей цели - в нем находится главный пин)
 function unRenderPinsToMap(array) {
   for (var i = 1; i < array.length; i++) {
     array[i].remove();
@@ -261,53 +311,26 @@ function unRenderPinsToMap(array) {
 //   beforeCardsBlock.before(renderCard(cardObject));
 // }
 
-var mapObjects = getObjectsArray(8); // получаем массив из созданных объектов
-// renderCardToMap(mapObjects[0]); // отрисовываем карточку жилья
-
-// ///////////////////////////////////////////////////////////////////////////////////////////////////////
-
-var MIN_TITLE_LENGTH = 30; // минимальная длина заголовка
-var MAX_TITLE_LENGTH = 100; // максимальная длина заголовка
-
-var pinMain = map.querySelector('.map__pin--main'); // главный пин
-var form = document.querySelector('.ad-form'); // форма для нашего объявления
-var formFieldsets = form.querySelectorAll('fieldset'); // находим ВЕ fieldset-ы в форме
-var addressInput = form.querySelector('#address'); // поле с адресом
-var title = form.querySelector('#title'); // поле для написания заголовка
-var typeOfRent = form.querySelector('#type'); // поле с типом жилья
-var priceOfRent = form.querySelector('#price'); // поле с ценой
-var timeIn = form.querySelector('#timein'); // select со временем заезда
-var timeOut = form.querySelector('#timeout'); // select со временем выезда
-var roomNumber = form.querySelector('#room_number'); // select с количеством комнат
-var capacity = form.querySelector('#capacity'); // select с количеством гостей
-var formReset = form.querySelector('.ad-form__reset'); // кнопка сброса формы
-
 /**
- * назначаем атрибут disabled для элементов массива
+ * назначаем/убираем атрибут disabled для элементов массива
  * @param {object} array - массив, в данном случае список fieldset-ов
+ * @param {boolean} isDisabled - true либо false, добавить либо убрать атрибут
  */
-function setAttributeDisabled(array) {
+function toggleAttributeDisabled(array, isDisabled) {
   for (var i = 0; i < array.length; i++) {
-    array[i].disabled = true;
+    array[i].disabled = isDisabled;
   }
 }
 
 /**
- * убираем атрибут disabled для элементов массива
- * @param {object} array  - массив, в данном случае список fieldset-ов
+ * валидация на пустое поле
+ * @param {object} element - элемент который проверяем
  */
-function removeAttributeDisabled(array) {
-  for (var i = 0; i < array.length; i++) {
-    array[i].disabled = false;
-  }
-}
-
-// валидация ввода заголовка
-function validationTitleDefault() {
-  if (title.validity.valueMissing) {
-    title.setCustomValidity('Обязательное поле');
+function validationEmpty(element) {
+  if (element.validity.valueMissing) {
+    element.setCustomValidity('Обязательное поле');
   } else {
-    title.setCustomValidity('');
+    element.setCustomValidity('');
   }
 }
 
@@ -326,14 +349,14 @@ function validationTitleInput() {
 
 /**
  * узнаем координаты главного пина pinMain
- * @param {object} inputBlock - блок ввода координат (readonly)
+ * @param {object} inputBlock - инпут для отображения координат (readonly)
  * @param {object} pin - pinMain
  */
 function setCoordinateToInput(inputBlock, pin) {
   var x = Math.round(parseInt(pin.style.left, 10) + pin.offsetWidth / 2);
   var y = Math.round(parseInt(pin.style.top, 10) + pin.offsetHeight);
 
-  // если карта неактивна
+  // если карта неактивна, координата является центром пина, а не острием
   if (map.classList.contains('map--faded')) {
     y = Math.round(parseInt(pin.style.top, 10) + pin.offsetHeight / 2);
   }
@@ -364,43 +387,17 @@ function getMinPrice() {
 }
 
 // валидируем на соответствие друг другу два селекта - с количеством комнат и количеством гостей
-function getCapacity() {
-  capacity.setCustomValidity('');
-  switch (roomNumber.value) {
-    case '1':
-      if (capacity.value !== '1') {
-        capacity.setCustomValidity('Вы можете взять с собой одного гостя, выберите правильный вариант');
-      }
-      break;
-    case '2':
-      if (capacity.value !== '1' || capacity.value !== '2') {
-        capacity.setCustomValidity('Вы можете взять с собой одного или двух гостей, выберите правильный вариант');
-      }
-      break;
-    case '3':
-      if (capacity.value === '0') {
-        capacity.setCustomValidity('Скучно будет одному, нужно позвать гостей, выберите правильный вариант');
-      }
-      break;
-    case '100':
-      if (capacity.value !== '0') {
-        capacity.setCustomValidity('Столько комнат, а вот гостей сюда позвать нельзя, выберите правильный вариант');
-      }
-      break;
+function validationCapacity() {
+  var last = roomsToCapacity[roomNumber.value][roomsToCapacity[roomNumber.value].length - 1]; // последний элемент массива значений
+  if (roomsToCapacity[roomNumber.value].includes(capacity.value)) {
+    capacity.setCustomValidity('');
+  } else {
+    capacity.setCustomValidity('Вы можете взять с собой максимально ' + last + ' гостя, выберите правильный вариант');
   }
 }
 
 // валидация поля с прайсом
-priceOfRent.addEventListener('invalid', function () {
-  if (priceOfRent.validity.valueMissing) {
-    priceOfRent.setCustomValidity('Обязательное поле');
-  } else {
-    priceOfRent.setCustomValidity('');
-  }
-});
-
-// валидация поля с прайсом
-priceOfRent.addEventListener('input', function () {
+function validationPriceInput() {
   var price = priceOfRent.value;
   var minPrice = Number(priceOfRent.getAttribute('min'));
   var maxPrice = Number(priceOfRent.getAttribute('max'));
@@ -412,7 +409,7 @@ priceOfRent.addEventListener('input', function () {
   } else {
     priceOfRent.setCustomValidity('');
   }
-});
+}
 
 // синхронизируем поля с временем заезда - выезда
 function syncTimeInWithOut() {
@@ -427,9 +424,12 @@ function syncTimeOutWithIn() {
 function setDefaultParameters() {
   addressInput.readonly = true;
 
+  setDefaultValues();
+  setDefaultFeatures();
   getMinPrice();
-  getCapacity();
-  setAttributeDisabled(formFieldsets);
+  // getCapacity();
+  validationCapacity();
+  toggleAttributeDisabled(formFieldsets, true);
   setCoordinateToInput(addressInput, pinMain);
 }
 
@@ -440,12 +440,18 @@ function activateMap() {
 
   renderPinsToMap(mapObjects); // отрисовываем пины
   setCoordinateToInput(addressInput, pinMain);
-  removeAttributeDisabled(formFieldsets); // делаем поля формы доступными
+  toggleAttributeDisabled(formFieldsets, false); // делаем поля формы доступными
 
-  title.addEventListener('invalid', validationTitleDefault);
+  title.addEventListener('invalid', function () {
+    validationEmpty(title);
+  });
   title.addEventListener('input', validationTitleInput);
-  roomNumber.addEventListener('change', getCapacity);
-  capacity.addEventListener('change', getCapacity);
+  priceOfRent.addEventListener('invalid', function () {
+    validationEmpty(priceOfRent);
+  });
+  priceOfRent.addEventListener('input', validationPriceInput);
+  roomNumber.addEventListener('change', validationCapacity);
+  capacity.addEventListener('change', validationCapacity);
   typeOfRent.addEventListener('change', getMinPrice);
   timeIn.addEventListener('change', syncTimeOutWithIn);
   timeOut.addEventListener('change', syncTimeInWithOut);
@@ -463,10 +469,16 @@ function deActivateMap() {
   unRenderPinsToMap(allPins);
   setDefaultParameters();
 
-  title.removeEventListener('invalid', validationTitleDefault);
-  title.addEventListener('input', validationTitleInput);
-  roomNumber.removeEventListener('change', getCapacity);
-  capacity.removeEventListener('change', getCapacity);
+  title.removeEventListener('invalid', function () {
+    validationEmpty(title);
+  });
+  title.removeEventListener('input', validationTitleInput);
+  priceOfRent.removeEventListener('invalid', function () {
+    validationEmpty(priceOfRent);
+  });
+  priceOfRent.removeEventListener('input', validationPriceInput);
+  roomNumber.removeEventListener('change', validationCapacity);
+  capacity.removeEventListener('change', validationCapacity);
   typeOfRent.removeEventListener('change', getMinPrice);
   timeIn.removeEventListener('change', syncTimeOutWithIn);
   timeOut.removeEventListener('change', syncTimeInWithOut);
@@ -488,4 +500,6 @@ pinMain.addEventListener('keydown', function (evt) {
   }
 });
 
+var mapObjects = getObjectsArray(8); // получаем массив из созданных объектов
+// renderCardToMap(mapObjects[0]); // отрисовываем карточку жилья
 setDefaultParameters();
