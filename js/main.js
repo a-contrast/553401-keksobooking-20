@@ -441,10 +441,12 @@ function setDefaultParameters() {
 
 // действия при активации карты
 function activateMap() {
+  // был косяк, что при повторном клике на главный пин в разметку добавлялись новые блоки с объявлениями, исправил таким образом
+  if (map.classList.contains('map--faded')) {
+    renderPinsToMap(mapObjects); // отрисовываем пины
+  }
   map.classList.remove('map--faded'); // делаем блок .map видимым
   form.classList.remove('ad-form--disabled'); // делаем форму доступной
-
-  renderPinsToMap(mapObjects); // отрисовываем пины
   setCoordinateToInput(addressInput, pinMain);
   toggleAttributeDisabled(formFieldsets, false); // делаем поля формы доступными
 
