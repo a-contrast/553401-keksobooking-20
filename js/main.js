@@ -474,7 +474,6 @@ function activateMap() {
       openPopup(getAttributeNumber(pin));
     }
   });
-
 }
 
 // действия для Деактивации карты
@@ -513,7 +512,6 @@ function deActivateMap() {
       openPopup(getAttributeNumber(pin));
     }
   });
-
 }
 
 // действия по нажатию ЛЕВОЙ кнопкой мыши по главному пину
