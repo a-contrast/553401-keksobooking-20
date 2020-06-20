@@ -60,9 +60,9 @@ var MAX_TITLE_LENGTH = 100;
 
 var map = document.querySelector('.map'); // находим блок с картой
 var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять наши метки
-// var beforeCardsBlock = document.querySelector('.map__filters-container'); // ПЕРЕД этим блоком вставим наши карточки
+var mapFilters = document.querySelector('.map__filters-container'); // ПЕРЕД этим блоком вставим наши карточки
 var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin'); // находим шаблон метки которую будем вставлять
-// var cardTemplate = document.querySelector('#card').content.querySelector('.map__card'); // находим шаблон карточки которую будем вставлять
+var cardTemplate = document.querySelector('#card').content.querySelector('.map__card'); // находим шаблон карточки которую будем вставлять
 var pinMain = map.querySelector('.map__pin--main'); // главный пин
 var form = document.querySelector('.ad-form'); // форма для нашего объявления
 var formFieldsets = form.querySelectorAll('fieldset'); // находим ВЕ fieldset-ы в форме
@@ -76,6 +76,8 @@ var roomNumber = form.querySelector('#room_number'); // select с количес
 var capacity = form.querySelector('#capacity'); // select с количеством гостей
 var features = form.querySelector('.features'); // блок с чекбоксами
 var formReset = form.querySelector('.ad-form__reset'); // кнопка сброса формы
+var popup; // после создания попапа = map.querySelector('.map__card');
+var popupCloseBtn; // после создания попапа = popup.querySelector('.popup__close');
 // запишем значения по дефолту
 var titleDefault = title.value;
 var typeOfRentDefault = typeOfRent.value;
@@ -132,16 +134,17 @@ function getRandomFromArray(array) {
 function getRandomSliceArray(array) {
   return array.slice(0, getRandomInRange(0, array.length));
 }
-
 /**
  * Возвращает созданный объект с данными
+ * @param {*} idIndex - данный индекс будем использовать при поиске нужного объявления на карте, его запишем в data-id
  * @return {object}
  */
-function getObject() {
+function getObject(idIndex) {
   // случайное число, координата x метки на карте. Значение ограничено размерами блока, в котором перетаскивается метка, "y": случайное число, координата y метки на карте от 130 до 630.
   var location = {x: getRandomInRange(0, map.offsetWidth), y: getRandomInRange(130, 630)};
 
   return {
+    number: idIndex,
     author: {
       avatar: ''
     },
@@ -172,9 +175,9 @@ function getObject() {
 function getObjectsArray(arrayLength) {
   var mapObjects = []; // наш массив объектов с данными, который мы будем заполнять полученными объектами
 
-  for (var i = 1; i <= arrayLength; i++) {
-    var mapObject = getObject();
-    mapObject.author.avatar = 'img/avatars/user0' + i + '.png';
+  for (var i = 0; i < arrayLength; i++) {
+    var mapObject = getObject(i);
+    mapObject.author.avatar = 'img/avatars/user0' + (i + 1) + '.png';
     mapObjects.push(mapObject);
   }
 
@@ -196,6 +199,9 @@ function renderPin(object) {
   // берем из нашего объекта данные для img
   pin.querySelector('img').src = object.author.avatar;
   pin.querySelector('img').alt = object.title;
+
+  // добавим
+  pin.dataset.number = object.number;
 
   return pin;
 }
@@ -228,88 +234,88 @@ function unRenderPinsToMap(array) {
  * @param {object} object - объект из массива с рандомными данными
  * @return {object}
  */
-// function renderCard(object) {
-//   var card = cardTemplate.cloneNode(true);
+function renderCard(object) {
+  var card = cardTemplate.cloneNode(true);
 
-//   card.querySelector('.popup__title').textContent = object.offer.title;
-//   card.querySelector('.popup__text--address').textContent = object.offer.address;
-//   card.querySelector('.popup__text--price').textContent = object.offer.price + '₽/ночь';
-//   card.querySelector('.popup__type').textContent = popupType();
-//   card.querySelector('.popup__text--capacity').textContent = object.offer.rooms + ' комнаты для ' + object.offer.guests + ' гостей';
-//   card.querySelector('.popup__text--time').textContent = 'Заезд после ' + object.offer.checkin + ' , выезд до ' + object.offer.checkout;
-//   card.querySelector('.popup__description').textContent = object.offer.description;
-//   card.querySelector('.popup__avatar').src = object.author.avatar;
+  card.querySelector('.popup__title').textContent = object.offer.title;
+  card.querySelector('.popup__text--address').textContent = object.offer.address;
+  card.querySelector('.popup__text--price').textContent = object.offer.price + '₽/ночь';
+  card.querySelector('.popup__type').textContent = popupType();
+  card.querySelector('.popup__text--capacity').textContent = object.offer.rooms + ' комнаты для ' + object.offer.guests + ' гостей';
+  card.querySelector('.popup__text--time').textContent = 'Заезд после ' + object.offer.checkin + ' , выезд до ' + object.offer.checkout;
+  card.querySelector('.popup__description').textContent = object.offer.description;
+  card.querySelector('.popup__avatar').src = object.author.avatar;
 
-//   /**
-//    * возвращает фотографию с нужным src для рендеринга в карточке
-//    * @param {object} arrialObject
-//    * @return {object}
-//    */
-//   function renderPhoto(arrialObject) {
-//     var photo = card.querySelector('.popup__photo').cloneNode(true);
-//     photo.src = arrialObject;
+  /**
+   * возвращает фотографию с нужным src для рендеринга в карточке
+   * @param {object} arrialObject
+   * @return {object}
+   */
+  function renderPhoto(arrialObject) {
+    var photo = card.querySelector('.popup__photo').cloneNode(true);
+    photo.src = arrialObject;
 
-//     return photo;
-//   }
+    return photo;
+  }
 
-//   /**
-//    * отрисовывает фотографии в карточке
-//    * @param {object} array - массив со ссылками на фотографии
-//    */
-//   function renderPhotoToCard(array) {
-//     var fragment = document.createDocumentFragment();
+  /**
+   * отрисовывает фотографии в карточке
+   * @param {object} array - массив со ссылками на фотографии
+   */
+  function renderPhotoToCard(array) {
+    var fragment = document.createDocumentFragment();
 
-//     for (var i = 0; i < array.length; i++) {
-//       fragment.appendChild(renderPhoto(array[i]));
-//     }
+    for (var i = 0; i < array.length; i++) {
+      fragment.appendChild(renderPhoto(array[i]));
+    }
 
-//     card.querySelector('.popup__photos').append(fragment);
-//     card.querySelector('.popup__photo' + ':first-child').remove();
-//   }
+    card.querySelector('.popup__photos').append(fragment);
+    card.querySelector('.popup__photo' + ':first-child').remove();
+  }
 
-//   // возвращает тип жилья
-//   function popupType() {
-//     var type;
-//     switch (object.offer.type) {
-//       case 'flat':
-//         type = 'Квартира';
-//         break;
-//       case 'bungalo':
-//         type = 'Бунгало';
-//         break;
-//       case 'house':
-//         type = 'Дом';
-//         break;
-//       case 'palace':
-//         type = 'Дворец';
-//         break;
-//     }
+  // возвращает тип жилья
+  function popupType() {
+    var type;
+    switch (object.offer.type) {
+      case 'flat':
+        type = 'Квартира';
+        break;
+      case 'bungalo':
+        type = 'Бунгало';
+        break;
+      case 'house':
+        type = 'Дом';
+        break;
+      case 'palace':
+        type = 'Дворец';
+        break;
+    }
 
-//     return type;
-//   }
+    return type;
+  }
 
-//   // убирает блоки из разметки (блоки с опциями, которых нет в выбранном жилье)
-//   function popupFeatures() {
-//     for (var i = 0; i < FEATURES.length; i++) {
-//       if (!object.offer.features.includes(FEATURES[i])) {
-//         card.querySelector('.popup__feature--' + FEATURES[i]).remove();
-//       }
-//     }
-//   }
+  // убирает блоки из разметки (блоки с опциями, которых нет в выбранном жилье)
+  function popupFeatures() {
+    for (var i = 0; i < FEATURES.length; i++) {
+      if (!object.offer.features.includes(FEATURES[i])) {
+        card.querySelector('.popup__feature--' + FEATURES[i]).remove();
+      }
+    }
+  }
 
-//   popupFeatures();
-//   renderPhotoToCard(PHOTOS);
+  popupFeatures();
+  renderPhotoToCard(PHOTOS);
 
-//   return card;
-// }
+  return card;
+}
 
 /**
  * отображает карточку жилья на странице
  * @param {object} cardObject - объект для отображения карточки
  */
-// function renderCardToMap(cardObject) {
-//   beforeCardsBlock.before(renderCard(cardObject));
-// }
+function renderCardToMap(cardObject) {
+  mapFilters.before(renderCard(cardObject));
+}
 
 /**
  * назначаем/убираем атрибут disabled для элементов массива
@@ -457,6 +463,18 @@ function activateMap() {
   timeOut.addEventListener('change', syncTimeInWithOut);
   formReset.addEventListener('click', deActivateMap);
 
+  map.addEventListener('click', function (evt) {
+    var pin = evt.target.closest('.map__pin');
+
+    if (!pin) {
+      return;
+    }
+
+    if (pin.hasAttribute('data-number')) {
+      openPopup(getAttributeNumber(pin));
+    }
+  });
+
 }
 
 // действия для Деактивации карты
@@ -484,6 +502,18 @@ function deActivateMap() {
   timeOut.removeEventListener('change', syncTimeInWithOut);
   formReset.removeEventListener('click', deActivateMap);
 
+  map.removeEventListener('click', function (evt) {
+    var pin = evt.target.closest('.map__pin');
+
+    if (!pin) {
+      return;
+    }
+
+    if (pin.hasAttribute('data-number')) {
+      openPopup(getAttributeNumber(pin));
+    }
+  });
+
 }
 
 // действия по нажатию ЛЕВОЙ кнопкой мыши по главному пину
@@ -500,6 +530,54 @@ pinMain.addEventListener('keydown', function (evt) {
   }
 });
 
+/**
+ * получаем атрибут number от элемента на который нажали
+ * @param {object} element - пин на который нажали
+ * @return {number}
+ */
+function getAttributeNumber(element) {
+  var number = element.getAttribute('data-number');
+  return number;
+}
+
+/**
+ * отображает карточку жилища, добавляет слушателей на закрытие
+ * @param {number} number - число взятое из атрибута number пина, на который нажали
+ */
+function openPopup(number) {
+  if (popup) {
+    popup.remove();
+  }
+
+  renderCardToMap(mapObjects[number]);
+  popup = map.querySelector('.map__card');
+  popupCloseBtn = popup.querySelector('.popup__close');
+
+  map.addEventListener('keydown', function (evt) {
+    if (evt.key === 'Escape') {
+      closePopup();
+    }
+  });
+
+  popupCloseBtn.addEventListener('click', function () {
+    closePopup();
+  });
+}
+
+// закрываем карточку жилья, удаляем слушателей
+function closePopup() {
+  map.removeEventListener('keydown', function (evt) {
+    if (evt.key === 'Escape') {
+      closePopup();
+    }
+  });
+
+  popupCloseBtn.removeEventListener('click', function () {
+    closePopup();
+  });
+
+  popup.remove();
+}
+
 var mapObjects = getObjectsArray(8); // получаем массив из созданных объектов
-// renderCardToMap(mapObjects[0]); // отрисовываем карточку жилья
 setDefaultParameters();
