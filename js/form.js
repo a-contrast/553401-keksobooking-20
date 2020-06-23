@@ -45,8 +45,6 @@
       roomNumber.value = roomNumberDefault;
       capacity.value = capacityDefault;
       addressInput.readOnly = true;
-      console.log('заданы параметры по умолчанию');
-
     },
 
     // устанавливает дефолтные значения для чекбоксов блока features
