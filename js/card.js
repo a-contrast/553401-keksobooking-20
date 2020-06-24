@@ -1,43 +1,26 @@
 'use strict';
 
-var cardTemplate = document.querySelector('#card').content.querySelector('.map__card'); // находим шаблон карточки которую будем вставлять
-var mapFilters = document.querySelector('.map__filters-container'); // ПЕРЕД этим блоком вставим наши карточки
-
 (function () {
-  /**
-   * возвращает тип жилья
-   * @param {object} object - объект жилья из массива (mapObjects)
-   * @return {string}
-   */
-  function popupType(object) {
-    var type;
-    switch (object.offer.type) {
-      case 'flat':
-        type = 'Квартира';
-        break;
-      case 'bungalo':
-        type = 'Бунгало';
-        break;
-      case 'house':
-        type = 'Дом';
-        break;
-      case 'palace':
-        type = 'Дворец';
-        break;
-    }
-
-    return type;
-  }
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card'); // находим шаблон карточки которую будем вставлять
+  var mapFilters = document.querySelector('.map__filters-container'); // ПЕРЕД этим блоком вставим наши карточки
+  // тип жилья
+  var popupType = {
+    'flat': 'Квартира',
+    'bungalo': 'Бунгало',
+    'house': 'Дом',
+    'palace': 'Дворец'
+  };
 
   /**
    * убирает блоки из разметки (блоки с опциями в карточке, которых нет в выбранном жилье)
    * @param {object} object - объект жилья из массива (mapObjects)
    * @param {object} template - темплейт в котором производим действия
+   * @param {object} array - массив FEATURES
    */
-  function popupFeatures(object, template) {
-    for (var i = 0; i < window.data.FEATURES.length; i++) {
-      if (!object.offer.features.includes(window.data.FEATURES[i])) {
-        template.querySelector('.popup__feature--' + window.data.FEATURES[i]).remove();
+  function popupFeatures(object, template, array) {
+    for (var i = 0; i < array.length; i++) {
+      if (!object.offer.features.includes(array[i])) {
+        template.querySelector('.popup__feature--' + array[i]).remove();
       }
     }
   }
@@ -82,13 +65,13 @@ var mapFilters = document.querySelector('.map__filters-container'); // ПЕРЕ�
     card.querySelector('.popup__title').textContent = object.offer.title;
     card.querySelector('.popup__text--address').textContent = object.offer.address;
     card.querySelector('.popup__text--price').textContent = object.offer.price + '₽/ночь';
-    card.querySelector('.popup__type').textContent = popupType(object);
+    card.querySelector('.popup__type').textContent = popupType[object.offer.type];
     card.querySelector('.popup__text--capacity').textContent = object.offer.rooms + ' комнаты для ' + object.offer.guests + ' гостей';
     card.querySelector('.popup__text--time').textContent = 'Заезд после ' + object.offer.checkin + ' , выезд до ' + object.offer.checkout;
     card.querySelector('.popup__description').textContent = object.offer.description;
     card.querySelector('.popup__avatar').src = object.author.avatar;
 
-    popupFeatures(object, card);
+    popupFeatures(object, card, window.data.FEATURES);
     renderPhotoToCard(window.data.PHOTOS, card);
 
     return card;

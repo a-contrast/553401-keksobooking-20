@@ -1,6 +1,5 @@
 'use strict';
 
-
 (function () {
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin'); // находим шаблон метки которую будем вставлять
   var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять наши метки
