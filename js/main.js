@@ -1,7 +1,6 @@
 'use strict';
 
 (function () {
-  var pinMain = window.data.map.querySelector('.map__pin--main'); // главный пин
   var formFieldsets = window.form.form.querySelectorAll('fieldset'); // находим ВЕ fieldset-ы в форме
   var formReset = window.form.form.querySelector('.ad-form__reset'); // кнопка сброса формы
 
@@ -13,11 +12,11 @@
     // getCapacity();
     window.form.validationCapacity();
     window.form.toggleAttributeDisabled(formFieldsets, true);
-    window.form.setCoordinateToInput(window.form.addressInput, pinMain);
+    window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
     // действия по нажатию ЛЕВОЙ кнопкой мыши по главному пину
-    pinMain.addEventListener('mousedown', onClickMainPin);
+    window.pin.pinMain.addEventListener('mousedown', onClickMainPin);
     // действия при нажатии кнопки открытия попапа клавишей ENTER
-    pinMain.addEventListener('keydown', onClickMainPin);
+    window.pin.pinMain.addEventListener('keydown', onClickMainPin);
   }
 
   function onClickMainPin(evt) {
@@ -28,15 +27,15 @@
 
   // действия при активации карты
   function activateMap() {
-    pinMain.removeEventListener('mousedown', onClickMainPin);
+    window.pin.pinMain.removeEventListener('mousedown', onClickMainPin);
 
-    pinMain.removeEventListener('keydown', onClickMainPin);
+    window.pin.pinMain.removeEventListener('keydown', onClickMainPin);
 
     window.data.map.classList.remove('map--faded'); // делаем блок .map видимым
     window.form.form.classList.remove('ad-form--disabled'); // делаем форму доступной
 
     window.pin.renderPinsToMap(window.data.mapObjects); // отрисовываем пины
-    window.form.setCoordinateToInput(window.form.addressInput, pinMain);
+    window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
     window.form.toggleAttributeDisabled(formFieldsets, false); // делаем поля формы доступными
 
     window.form.priceOfRent.addEventListener('input', window.form.validationPriceInput);
@@ -48,7 +47,19 @@
     window.data.map.addEventListener('click', window.popup.onClickMapPin);
     formReset.addEventListener('click', deActivateMap);
 
-
+    window.pin.pinMain.addEventListener('mousedown', function (evt) {
+      window.move.onMoveElement(
+          evt,
+          window.pin.pinMain,
+          window.data.MAP_COORDINATES.x.min,
+          window.data.MAP_COORDINATES.x.max,
+          window.data.MAP_COORDINATES.y.min,
+          window.data.MAP_COORDINATES.y.max
+      );
+      document.addEventListener('mousemove', function () {
+        window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
+      });
+    });
     window.form.title.addEventListener('invalid', function () {
       window.form.validationEmpty(window.form.title);
     });
@@ -77,6 +88,19 @@
     window.data.map.removeEventListener('click', window.popup.onClickMapPin);
     formReset.removeEventListener('click', deActivateMap);
 
+    window.pin.pinMain.removeEventListener('mousedown', function (evt) {
+      window.move.onMoveElement(
+          evt,
+          window.pin.pinMain,
+          window.data.MAP_COORDINATES.x.min,
+          window.data.MAP_COORDINATES.x.max,
+          window.data.MAP_COORDINATES.y.min,
+          window.data.MAP_COORDINATES.y.max
+      );
+      document.addEventListener('mousemove', function () {
+        window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
+      });
+    });
     window.form.title.removeEventListener('invalid', function () {
       window.form.validationEmpty(window.form.title);
     });
