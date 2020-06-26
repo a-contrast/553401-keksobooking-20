@@ -46,6 +46,17 @@
     'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
     'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
   ];
+  // мин и макс координаты перемещения пина
+  var MAP_COORDINATES = {
+    x: {
+      min: 0,
+      max: 1200
+    },
+    y: {
+      min: 130,
+      max: 630
+    }
+  };
 
   var MAP_OBJECTS_LENGTH = 8;
 
@@ -105,6 +116,7 @@
     mapObjects: getObjectsArray(MAP_OBJECTS_LENGTH),
     FEATURES: FEATURES,
     PHOTOS: PHOTOS,
+    MAP_COORDINATES: MAP_COORDINATES,
     map: map
   };
 
