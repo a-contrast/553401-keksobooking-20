@@ -56,7 +56,7 @@
 
   /**
    * возвращает карточку с данными для пина для рендеринга на странице
-   * @param {object} object - объект из массива с рандомными данными
+   * @param {object} object - объект недвижимости
    * @return {object}
    */
   function renderCard(object) {
@@ -72,7 +72,7 @@
     card.querySelector('.popup__avatar').src = object.author.avatar;
 
     popupFeatures(object, card, window.data.FEATURES);
-    renderPhotoToCard(window.data.PHOTOS, card);
+    renderPhotoToCard(object.offer.photos, card);
 
     return card;
   }
