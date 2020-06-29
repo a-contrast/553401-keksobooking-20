@@ -16,14 +16,15 @@
 
   /**
    * отображает карточку жилища, добавляет слушателей на закрытие
+   * @param {object} object - объект для показа попапа
    * @param {number} number - число взятое из атрибута number пина, на который нажали
    */
-  function openPopup(number) {
+  function openPopup(object) {
     if (popup) {
       popup.remove();
     }
 
-    window.card.renderCardToMap(window.data.mapObjects[number]);
+    window.card.renderCardToMap(object);
     popup = window.data.map.querySelector('.map__card');
     popupCloseBtn = popup.querySelector('.popup__close');
 
@@ -62,7 +63,7 @@
       }
 
       if (pin.hasAttribute('data-number')) {
-        openPopup(getAttributeNumber(pin));
+        openPopup(window.pin.pinsArray[getAttributeNumber(pin)]);
       }
     }
   };
