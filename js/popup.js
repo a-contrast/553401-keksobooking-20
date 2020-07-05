@@ -28,7 +28,7 @@
     popup = window.data.map.querySelector('.map__card');
     popupCloseBtn = popup.querySelector('.popup__close');
 
-    window.data.map.addEventListener('keydown', function (evt) {
+    document.addEventListener('keydown', function (evt) {
       if (evt.key === 'Escape') {
         closePopup();
       }
@@ -41,7 +41,7 @@
 
   // закрываем карточку жилья, удаляем слушателей
   function closePopup() {
-    window.data.map.removeEventListener('keydown', function (evt) {
+    document.removeEventListener('keydown', function (evt) {
       if (evt.key === 'Escape') {
         closePopup();
       }
