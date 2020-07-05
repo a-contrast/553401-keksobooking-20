@@ -19,6 +19,24 @@
     window.pin.pinMain.addEventListener('keydown', onClickMainPin);
   }
 
+  /**
+   * перемещаем главный пин и записываем координаты в инпут с адресом
+   * @param {object} evt - событие
+   */
+  function onMovePinMain(evt) {
+    window.move.onMoveElement(
+        evt,
+        window.pin.pinMain,
+        window.data.MAP_COORDINATES.x.min,
+        window.data.MAP_COORDINATES.x.max,
+        window.data.MAP_COORDINATES.y.min,
+        window.data.MAP_COORDINATES.y.max
+    );
+    document.addEventListener('mousemove', function () {
+      window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
+    });
+  }
+
   function onClickMainPin(evt) {
     if (evt.button === 0 || evt.key === 'Enter') {
       activateMap();
@@ -47,19 +65,7 @@
     window.data.map.addEventListener('click', window.popup.onClickMapPin);
     formReset.addEventListener('click', deActivateMap);
 
-    window.pin.pinMain.addEventListener('mousedown', function (evt) {
-      window.move.onMoveElement(
-          evt,
-          window.pin.pinMain,
-          window.data.MAP_COORDINATES.x.min,
-          window.data.MAP_COORDINATES.x.max,
-          window.data.MAP_COORDINATES.y.min,
-          window.data.MAP_COORDINATES.y.max
-      );
-      document.addEventListener('mousemove', function () {
-        window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
-      });
-    });
+    window.pin.pinMain.addEventListener('mousedown', onMovePinMain);
     window.form.title.addEventListener('invalid', function () {
       window.form.validationEmpty(window.form.title);
     });
@@ -67,6 +73,7 @@
     window.form.priceOfRent.addEventListener('invalid', function () {
       window.form.validationEmpty(window.form.priceOfRent);
     });
+    window.form.form.addEventListener('submit', window.form.upload);
   }
 
   // действия для Деактивации карты
@@ -88,19 +95,7 @@
     window.data.map.removeEventListener('click', window.popup.onClickMapPin);
     formReset.removeEventListener('click', deActivateMap);
 
-    window.pin.pinMain.removeEventListener('mousedown', function (evt) {
-      window.move.onMoveElement(
-          evt,
-          window.pin.pinMain,
-          window.data.MAP_COORDINATES.x.min,
-          window.data.MAP_COORDINATES.x.max,
-          window.data.MAP_COORDINATES.y.min,
-          window.data.MAP_COORDINATES.y.max
-      );
-      document.addEventListener('mousemove', function () {
-        window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
-      });
-    });
+    window.pin.pinMain.removeEventListener('mousedown', onMovePinMain);
     window.form.title.removeEventListener('invalid', function () {
       window.form.validationEmpty(window.form.title);
     });
@@ -108,8 +103,14 @@
     window.form.priceOfRent.removeEventListener('invalid', function () {
       window.form.validationEmpty(window.form.priceOfRent);
     });
+    window.form.form.removeEventListener('submit', window.form.upload);
   }
 
   setDefaultParameters();
 
+  window.main = {
+    deActivateMap: function () {
+      deActivateMap();
+    }
+  };
 })();

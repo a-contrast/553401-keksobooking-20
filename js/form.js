@@ -14,6 +14,7 @@
     '100': ['0']
   };
 
+  var main = document.querySelector('main');
   var form = document.querySelector('.ad-form'); // форма для нашего объявления
   var features = form.querySelector('.features'); // блок с чекбоксами
   var title = form.querySelector('#title'); // поле для написания заголовка
@@ -23,7 +24,13 @@
   var capacity = form.querySelector('#capacity'); // select с количеством гостей
   var timeIn = form.querySelector('#timein'); // select со временем заезда
   var timeOut = form.querySelector('#timeout'); // select со временем выезда
+  var description = form.querySelector('#description'); // textArea с описанием
   var addressInput = form.querySelector('#address'); // поле с адресом
+
+  var successTemplate = document.querySelector('#success').content.querySelector('.success'); // темплейт сообщения об успешной отправке
+  var errorTemplate = document.querySelector('#error').content.querySelector('.error'); // темплейт сообщения при ошибке отправки
+  var success = successTemplate.cloneNode(true);
+  var error = errorTemplate.cloneNode(true);
 
   // запишем значения по дефолту
   var titleDefault = title.value;
@@ -33,6 +40,40 @@
   var timeOutDefault = timeOut.value;
   var roomNumberDefault = roomNumber.value;
   var capacityDefault = capacity.value;
+  var descriptionDefault = description.value;
+
+  /**
+   * убирает блок из разметки
+   * @param {text} block - записывать в формате '.block' - блок, который нужно удалить
+   */
+  function removeBlock(block) {
+    var removableBlock = document.querySelector(block);
+    removableBlock.remove();
+  }
+
+  /**
+   * удаляет блок success и убирает лишние обработчики
+   * @param {object} evt - событие
+   */
+  function removeSuccessBlock(evt) {
+    if (evt.key === 'Escape' || evt.button === 0) {
+      removeBlock('.success');
+      document.removeEventListener('keydown', removeSuccessBlock);
+      document.removeEventListener('click', removeSuccessBlock);
+    }
+  }
+
+  /**
+   * удаляет блок error и убирает лишние обработчики
+   * @param {object} evt - событие
+   */
+  function removeErrorBlock(evt) {
+    if (evt.key === 'Escape' || evt.button === 0) {
+      removeBlock('.error');
+      document.removeEventListener('keydown', removeErrorBlock);
+      document.removeEventListener('click', removeErrorBlock);
+    }
+  }
 
   window.form = {
     // устанавливает значения по дефолту
@@ -44,6 +85,7 @@
       timeOut.value = timeOutDefault;
       roomNumber.value = roomNumberDefault;
       capacity.value = capacityDefault;
+      description.value = descriptionDefault;
       addressInput.readOnly = true;
     },
 
@@ -162,6 +204,24 @@
 
     syncTimeOutWithIn: function () {
       timeOut.value = timeIn.value;
+    },
+
+    upload: function (evt) {
+      window.upload(
+          new FormData(window.form.form),
+          function () {
+            window.main.deActivateMap();
+            main.appendChild(success);
+
+            document.addEventListener('keydown', removeSuccessBlock);
+            document.addEventListener('click', removeSuccessBlock);
+          },
+          function () {
+            main.appendChild(error);
+            document.addEventListener('keydown', removeErrorBlock);
+            document.addEventListener('click', removeErrorBlock);
+          });
+      evt.preventDefault();
     },
 
     form: form,
