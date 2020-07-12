@@ -4,6 +4,8 @@
   var pinTemplate = document.querySelector('#pin').content.querySelector('.map__pin'); // находим шаблон метки которую будем вставлять
   var pinsBlock = document.querySelector('.map__pins'); // находим блок в который будем вставлять наши метки
   var pinMain = window.data.map.querySelector('.map__pin--main'); // главный пин
+  var pinMainDefaultLeft = '570px';
+  var pinMainDefaultTop = '375px';
   var pinsArray;
 
   /**
@@ -29,17 +31,28 @@
     return pin;
   }
 
-  function onSuccessLoadData(array) {
+  function renderPinsOnMap(array) {
     var fragment = document.createDocumentFragment();
-    window.pin.pinsArray = array;
 
     // для начала отрендерим их во fragment
     for (var i = 0; i < array.length; i++) {
-      fragment.appendChild(renderPin(array[i], i));
+      fragment.appendChild(renderPin(window.pin.pinsArray[i], i));
     }
 
     // теперь fragment отобразим на странице
     pinsBlock.appendChild(fragment);
+  }
+
+  function onSuccessLoadData(array) {
+    var housingType = document.querySelector('#housing-type');
+
+    var typeOfRentArray = array.filter(function (pin) {
+      return pin.offer.type === housingType.value || housingType.value === 'any';
+    });
+
+    window.pin.pinsArray = typeOfRentArray.slice(0, 5);
+
+    renderPinsOnMap(window.pin.pinsArray);
   }
 
   function onErrorLoadData(errorMessage) {
@@ -74,6 +87,8 @@
     },
 
     pinsBlock: pinsBlock,
-    pinMain: pinMain
+    pinMain: pinMain,
+    pinMainDefaultLeft: pinMainDefaultLeft,
+    pinMainDefaultTop: pinMainDefaultTop
   };
 })();

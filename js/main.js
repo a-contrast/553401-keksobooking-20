@@ -3,9 +3,13 @@
 (function () {
   var formFieldsets = window.form.form.querySelectorAll('fieldset'); // находим ВЕ fieldset-ы в форме
   var formReset = window.form.form.querySelector('.ad-form__reset'); // кнопка сброса формы
+  var mapFilters = document.querySelector('.map__filters');
+
 
   // устанавливает значения при открытии страницы
   function setDefaultParameters() {
+    window.pin.pinMain.style.left = window.pin.pinMainDefaultLeft;
+    window.pin.pinMain.style.top = window.pin.pinMainDefaultTop;
     window.form.setDefaultValues();
     window.form.setDefaultFeatures();
     window.form.getMinPrice();
@@ -37,6 +41,18 @@
     });
   }
 
+  function onChangeMapFilter() {
+    var allPins = window.pin.pinsBlock.querySelectorAll('.map__pin'); // найдем и запишем в псевдомассив отрисованные пины
+    var popup = window.data.map.querySelector('.map__card');
+
+    if (popup) {
+      popup.remove();
+    }
+
+    window.pin.unRenderPinsToMap(allPins);
+    window.pin.renderPinsToMap();
+  }
+
   function onClickMainPin(evt) {
     if (evt.button === 0 || evt.key === 'Enter') {
       activateMap();
@@ -56,6 +72,7 @@
     window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
     window.form.toggleAttributeDisabled(formFieldsets, false); // делаем поля формы доступными
 
+    mapFilters.addEventListener('change', onChangeMapFilter);
     window.form.priceOfRent.addEventListener('input', window.form.validationPriceInput);
     window.form.roomNumber.addEventListener('change', window.form.validationCapacity);
     window.form.capacity.addEventListener('change', window.form.validationCapacity);
@@ -86,6 +103,7 @@
     window.pin.unRenderPinsToMap(allPins);
     setDefaultParameters();
 
+    mapFilters.removeEventListener('change', onChangeMapFilter);
     window.form.priceOfRent.removeEventListener('input', window.form.validationPriceInput);
     window.form.roomNumber.removeEventListener('change', window.form.validationCapacity);
     window.form.capacity.removeEventListener('change', window.form.validationCapacity);
