@@ -5,8 +5,11 @@
   var formReset = window.form.form.querySelector('.ad-form__reset'); // кнопка сброса формы
   var mapFilters = document.querySelector('.map__filters');
 
+
   // устанавливает значения при открытии страницы
   function setDefaultParameters() {
+    window.pin.pinMain.style.left = window.pin.pinMainDefaultLeft;
+    window.pin.pinMain.style.top = window.pin.pinMainDefaultTop;
     window.form.setDefaultValues();
     window.form.setDefaultFeatures();
     window.form.getMinPrice();
