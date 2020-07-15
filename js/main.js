@@ -3,7 +3,6 @@
 (function () {
   var formFieldsets = window.form.form.querySelectorAll('fieldset'); // находим ВЕ fieldset-ы в форме
   var formReset = window.form.form.querySelector('.ad-form__reset'); // кнопка сброса формы
-  var mapFilters = document.querySelector('.map__filters');
 
 
   // устанавливает значения при открытии страницы
@@ -72,7 +71,7 @@
     window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
     window.form.toggleAttributeDisabled(formFieldsets, false); // делаем поля формы доступными
 
-    mapFilters.addEventListener('change', onChangeMapFilter);
+    window.filter.mapFilters.addEventListener('change', onChangeMapFilter);
     window.form.priceOfRent.addEventListener('input', window.form.validationPriceInput);
     window.form.roomNumber.addEventListener('change', window.form.validationCapacity);
     window.form.capacity.addEventListener('change', window.form.validationCapacity);
@@ -103,7 +102,7 @@
     window.pin.unRenderPinsToMap(allPins);
     setDefaultParameters();
 
-    mapFilters.removeEventListener('change', onChangeMapFilter);
+    window.filter.mapFilters.removeEventListener('change', onChangeMapFilter);
     window.form.priceOfRent.removeEventListener('input', window.form.validationPriceInput);
     window.form.roomNumber.removeEventListener('change', window.form.validationCapacity);
     window.form.capacity.removeEventListener('change', window.form.validationCapacity);
