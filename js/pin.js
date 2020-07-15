@@ -43,15 +43,8 @@
     pinsBlock.appendChild(fragment);
   }
 
-  function onSuccessLoadData(array) {
-    var housingType = document.querySelector('#housing-type');
-
-    var typeOfRentArray = array.filter(function (pin) {
-      return pin.offer.type === housingType.value || housingType.value === 'any';
-    });
-
-    window.pin.pinsArray = typeOfRentArray.slice(0, 5);
-
+  function onSuccessLoadData(data) {
+    window.pin.pinsArray = window.filter.getFilteredArray(data);
     renderPinsOnMap(window.pin.pinsArray);
   }
 
