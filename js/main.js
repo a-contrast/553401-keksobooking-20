@@ -40,7 +40,7 @@
     });
   }
 
-  function onChangeMapFilter() {
+  var onChangeMapFilter = window.debounce(function() {
     var allPins = window.pin.pinsBlock.querySelectorAll('.map__pin'); // найдем и запишем в псевдомассив отрисованные пины
     var popup = window.data.map.querySelector('.map__card');
 
@@ -50,7 +50,7 @@
 
     window.pin.unRenderPinsToMap(allPins);
     window.pin.renderPinsToMap();
-  }
+  });
 
   function onClickMainPin(evt) {
     if (evt.button === 0 || evt.key === 'Enter') {
