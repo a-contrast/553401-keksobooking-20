@@ -76,6 +76,7 @@
   }
 
   window.form = {
+    features: features,
     // устанавливает значения по дефолту
     setDefaultValues: function () {
       title.value = titleDefault;
@@ -89,9 +90,9 @@
       addressInput.readOnly = true;
     },
 
-    // устанавливает дефолтные значения для чекбоксов блока features
-    setDefaultFeatures: function () {
-      var featuresArray = features.querySelectorAll('input');
+    // устанавливает дефолтные значения для чекбоксов
+    setDefaultFeatures: function (block) {
+      var featuresArray = block.querySelectorAll('input');
       for (var i = 0; i < featuresArray.length; i++) {
         featuresArray[i].checked = false;
       }

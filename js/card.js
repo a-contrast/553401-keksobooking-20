@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card'); // находим шаблон карточки которую будем вставлять
+  var cardTemplate = document.querySelector('#card').content.querySelector('.map__card'); // шаблон карточки которую будем вставлять
   var mapFilters = document.querySelector('.map__filters-container'); // ПЕРЕД этим блоком вставим наши карточки
   // тип жилья
   var popupType = {
