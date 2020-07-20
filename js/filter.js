@@ -102,7 +102,7 @@
       && filterByPrice(element)
       && filterByRooms(element)
       && filterByGuest(element)
-      && filterByFeatures(element)
+      && filterByFeatures(element);
   }
 
   window.filter = {
