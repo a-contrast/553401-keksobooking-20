@@ -10,7 +10,9 @@
     window.pin.pinMain.style.left = window.pin.pinMainDefaultLeft;
     window.pin.pinMain.style.top = window.pin.pinMainDefaultTop;
     window.form.setDefaultValues();
-    window.form.setDefaultFeatures();
+    window.filter.setDefaultValues();
+    window.form.setDefaultFeatures(window.form.features);
+    window.form.setDefaultFeatures(window.filter.housingFeatures);
     window.form.getMinPrice();
     // getCapacity();
     window.form.validationCapacity();

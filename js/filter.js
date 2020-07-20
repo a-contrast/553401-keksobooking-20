@@ -2,6 +2,8 @@
 
 (function () {
   var MAX_RENDER_PINS = 5;
+  var LOW_PRICE = 10000;
+  var HIGHT_PRICE = 50000;
 
   var mapFilters = document.querySelector('.map__filters');
   var housingType = mapFilters.querySelector('#housing-type');
@@ -10,6 +12,12 @@
   var housingGuests = mapFilters.querySelector('#housing-guests');
   var housingFeatures = mapFilters.querySelector('#housing-features');
   var housingFeaturesInputs = housingFeatures.querySelectorAll('input');
+
+  // запишем значения по дефолту
+  var housingTypeDefault = housingType.value;
+  var housingPriceDefault = housingPrice.value;
+  var housingRoomsDefault = housingRooms.value;
+  var housingGuestsDefault = housingGuests.value;
 
   /**
    * возвращает элемент попадающий под условия (фильтр по типу объекта жилья)
@@ -28,11 +36,11 @@
   function filterByPrice(element) {
     switch (housingPrice.value) {
       case 'low':
-        return element.offer.price < 10000;
+        return element.offer.price < LOW_PRICE;
       case 'middle':
-        return element.offer.price < 50000 && element.offer.price >= 10000;
+        return element.offer.price < HIGHT_PRICE && element.offer.price >= LOW_PRICE;
       case 'high':
-        return element.offer.price >= 50000;
+        return element.offer.price >= HIGHT_PRICE;
       default:
         return true;
     }
@@ -79,6 +87,12 @@
   }
 
   window.filter = {
+    setDefaultValues: function () {
+      housingType.value = housingTypeDefault;
+      housingPrice.value = housingPriceDefault;
+      housingRooms.value = housingRoomsDefault;
+      housingGuests.value = housingGuestsDefault;
+    },
     getFilteredArray: function (data) {
       return data.filter(filterByTypeOfRent).
       filter(filterByPrice).
@@ -86,6 +100,7 @@
       filter(filterByFeatures).
       slice(0, MAX_RENDER_PINS);
     },
-    mapFilters: mapFilters
+    mapFilters: mapFilters,
+    housingFeatures: housingFeatures
   };
 })();
