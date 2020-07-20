@@ -22,6 +22,7 @@
     window.pin.pinMain.addEventListener('mousedown', onClickMainPin);
     // действия при нажатии кнопки открытия попапа клавишей ENTER
     window.pin.pinMain.addEventListener('keydown', onClickMainPin);
+    removePopup();
   }
 
   /**
@@ -42,14 +43,19 @@
     });
   }
 
-  var onChangeMapFilter = window.debounce(function () {
-    var allPins = window.pin.pinsBlock.querySelectorAll('.map__pin'); // найдем и запишем в псевдомассив отрисованные пины
+  // убирает попап, если он открыт
+  function removePopup() {
     var popup = window.data.map.querySelector('.map__card');
 
     if (popup) {
       popup.remove();
     }
+  }
 
+  var onChangeMapFilter = window.debounce(function () {
+    var allPins = window.pin.pinsBlock.querySelectorAll('.map__pin'); // найдем и запишем в псевдомассив отрисованные пины
+
+    removePopup();
     window.pin.unRenderPinsToMap(allPins);
     window.pin.renderPinsToMap();
   });
