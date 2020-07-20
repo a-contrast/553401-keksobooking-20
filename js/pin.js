@@ -16,14 +16,15 @@
    */
   function renderPin(object, number) {
     var pin = pinTemplate.cloneNode(true);
+    var pinImg = pin.querySelector('img');
 
     // положение пина с учетом его размеров
-    pin.style.left = object.location.x + pin.offsetWidth / 2 + 'px';
-    pin.style.top = object.location.y + pin.offsetHeight + 'px';
+    pin.style.left = object.location.x - (pinImg.width / 2) + 'px';
+    pin.style.top = object.location.y - pinImg.height + 'px';
 
     // берем из нашего объекта данные для img
-    pin.querySelector('img').src = object.author.avatar;
-    pin.querySelector('img').alt = object.title;
+    pinImg.src = object.author.avatar;
+    pinImg.alt = object.title;
 
     // добавим
     pin.dataset.number = number;

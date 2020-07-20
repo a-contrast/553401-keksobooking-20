@@ -5,6 +5,12 @@
   var LOW_PRICE = 10000;
   var HIGHT_PRICE = 50000;
 
+  var priceValue = {
+    LOW: 'low',
+    MIDDLE: 'middle',
+    HIGH: 'high'
+  };
+
   var mapFilters = document.querySelector('.map__filters');
   var housingType = mapFilters.querySelector('#housing-type');
   var housingPrice = mapFilters.querySelector('#housing-price');
@@ -35,11 +41,11 @@
    */
   function filterByPrice(element) {
     switch (housingPrice.value) {
-      case 'low':
+      case priceValue.LOW:
         return element.offer.price < LOW_PRICE;
-      case 'middle':
+      case priceValue.MIDDLE:
         return element.offer.price < HIGHT_PRICE && element.offer.price >= LOW_PRICE;
-      case 'high':
+      case priceValue.HIGH:
         return element.offer.price >= HIGHT_PRICE;
       default:
         return true;
@@ -86,6 +92,19 @@
     return elementActive;
   }
 
+  /**
+   * возвращает элемент попадающий под условия всех фильтров
+   * @param {object} element - объект из массива полученных данных с сервера
+   * @return {object}
+   */
+  function filterAll(element) {
+    return filterByTypeOfRent(element)
+      && filterByPrice(element)
+      && filterByRooms(element)
+      && filterByGuest(element)
+      && filterByFeatures(element)
+  }
+
   window.filter = {
     setDefaultValues: function () {
       housingType.value = housingTypeDefault;
@@ -94,11 +113,9 @@
       housingGuests.value = housingGuestsDefault;
     },
     getFilteredArray: function (data) {
-      return data.filter(filterByTypeOfRent).
-      filter(filterByPrice).
-      filter(filterByRooms).filter(filterByGuest).
-      filter(filterByFeatures).
-      slice(0, MAX_RENDER_PINS);
+      return data
+        .filter(filterAll)
+        .slice(0, MAX_RENDER_PINS);
     },
     mapFilters: mapFilters,
     housingFeatures: housingFeatures

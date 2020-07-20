@@ -14,6 +14,13 @@
     '100': ['0']
   };
 
+  var rentMinPrice = {
+    'flat': '1000',
+    'bungalo': '0',
+    'house': '5000',
+    'palace': '10000'
+  };
+
   var main = document.querySelector('main');
   var form = document.querySelector('.ad-form'); // форма для нашего объявления
   var features = form.querySelector('.features'); // блок с чекбоксами
@@ -153,24 +160,8 @@
 
     // устанавливает атрибуты min и placeholder для поля price в зависимости от выбранного жилья
     getMinPrice: function () {
-      switch (typeOfRent.value) {
-        case 'flat':
-          priceOfRent.setAttribute('min', '1000');
-          priceOfRent.setAttribute('placeholder', '1000');
-          break;
-        case 'bungalo':
-          priceOfRent.setAttribute('min', '0');
-          priceOfRent.setAttribute('placeholder', '0');
-          break;
-        case 'house':
-          priceOfRent.setAttribute('min', '5000');
-          priceOfRent.setAttribute('placeholder', '5000');
-          break;
-        case 'palace':
-          priceOfRent.setAttribute('min', '10000');
-          priceOfRent.setAttribute('placeholder', '10000');
-          break;
-      }
+      priceOfRent.setAttribute('min', rentMinPrice[typeOfRent.value]);
+      priceOfRent.setAttribute('placeholder', rentMinPrice[typeOfRent.value]);
     },
 
     // валидируем на соответствие друг другу два селекта - с количеством комнат и количеством гостей

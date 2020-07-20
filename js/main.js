@@ -35,8 +35,8 @@
         window.pin.pinMain,
         window.data.MAP_COORDINATES.x.min,
         window.data.MAP_COORDINATES.x.max,
-        window.data.MAP_COORDINATES.y.min,
-        window.data.MAP_COORDINATES.y.max
+        window.data.MAP_COORDINATES.y.min - window.pin.pinMain.offsetHeight,
+        window.data.MAP_COORDINATES.y.max- window.pin.pinMain.offsetHeight
     );
     document.addEventListener('mousemove', function () {
       window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
