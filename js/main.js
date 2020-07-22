@@ -75,7 +75,7 @@
     window.data.map.classList.remove('map--faded'); // делаем блок .map видимым
     window.form.form.classList.remove('ad-form--disabled'); // делаем форму доступной
 
-    window.pin.renderPinsToMap()/* (window.data.mapObjects) */; // отрисовываем пины
+    window.pin.renderPinsToMap(); // отрисовываем пины
     window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
     window.form.toggleAttributeDisabled(formFieldsets, false); // делаем поля формы доступными
 

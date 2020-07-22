@@ -113,9 +113,19 @@
       housingGuests.value = housingGuestsDefault;
     },
     getFilteredArray: function (data) {
-      return data
-        .filter(filterAll)
-        .slice(0, MAX_RENDER_PINS);
+      var filteredArray = [];
+      
+      for (var i = 0; i < data.length; i++) {
+        if (filterAll(data[i])) {
+          filteredArray.push(data[i]);
+        }
+
+        if (filteredArray.length === MAX_RENDER_PINS) {
+          break;
+        }
+      }
+
+      return filteredArray;
     },
     mapFilters: mapFilters,
     housingFeatures: housingFeatures
