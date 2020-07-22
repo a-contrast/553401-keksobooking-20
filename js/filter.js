@@ -114,7 +114,7 @@
     },
     getFilteredArray: function (data) {
       var filteredArray = [];
-      
+
       for (var i = 0; i < data.length; i++) {
         if (filterAll(data[i])) {
           filteredArray.push(data[i]);
