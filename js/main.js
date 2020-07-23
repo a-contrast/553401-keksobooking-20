@@ -22,6 +22,7 @@
     window.pin.pinMain.addEventListener('mousedown', onClickMainPin);
     // действия при нажатии кнопки открытия попапа клавишей ENTER
     window.pin.pinMain.addEventListener('keydown', onClickMainPin);
+    removePopup();
   }
 
   /**
@@ -34,22 +35,27 @@
         window.pin.pinMain,
         window.data.MAP_COORDINATES.x.min,
         window.data.MAP_COORDINATES.x.max,
-        window.data.MAP_COORDINATES.y.min,
-        window.data.MAP_COORDINATES.y.max
+        window.data.MAP_COORDINATES.y.min - window.pin.pinMain.offsetHeight,
+        window.data.MAP_COORDINATES.y.max - window.pin.pinMain.offsetHeight
     );
     document.addEventListener('mousemove', function () {
       window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
     });
   }
 
-  var onChangeMapFilter = window.debounce(function () {
-    var allPins = window.pin.pinsBlock.querySelectorAll('.map__pin'); // найдем и запишем в псевдомассив отрисованные пины
+  // убирает попап, если он открыт
+  function removePopup() {
     var popup = window.data.map.querySelector('.map__card');
 
     if (popup) {
       popup.remove();
     }
+  }
 
+  var onChangeMapFilter = window.debounce(function () {
+    var allPins = window.pin.pinsBlock.querySelectorAll('.map__pin'); // найдем и запишем в псевдомассив отрисованные пины
+
+    removePopup();
     window.pin.unRenderPinsToMap(allPins);
     window.pin.renderPinsToMap();
   });
@@ -69,7 +75,7 @@
     window.data.map.classList.remove('map--faded'); // делаем блок .map видимым
     window.form.form.classList.remove('ad-form--disabled'); // делаем форму доступной
 
-    window.pin.renderPinsToMap()/* (window.data.mapObjects) */; // отрисовываем пины
+    window.pin.renderPinsToMap(); // отрисовываем пины
     window.form.setCoordinateToInput(window.form.addressInput, window.pin.pinMain);
     window.form.toggleAttributeDisabled(formFieldsets, false); // делаем поля формы доступными
 
