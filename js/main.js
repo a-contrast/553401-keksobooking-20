@@ -23,6 +23,7 @@
     // действия при нажатии кнопки открытия попапа клавишей ENTER
     window.pin.pinMain.addEventListener('keydown', onClickMainPin);
     removePopup();
+    window.loadImage.defaultImage();
   }
 
   /**
@@ -98,6 +99,8 @@
       window.form.validationEmpty(window.form.priceOfRent);
     });
     window.form.form.addEventListener('submit', window.form.upload);
+    window.loadImage.avatarInput.addEventListener('change', window.loadImage.showAvatar);
+    window.loadImage.photoHomeInput.addEventListener('change', window.loadImage.showHomeImage);
   }
 
   // действия для Деактивации карты
@@ -129,6 +132,8 @@
       window.form.validationEmpty(window.form.priceOfRent);
     });
     window.form.form.removeEventListener('submit', window.form.upload);
+    window.loadImage.avatarInput.removeEventListener('change', window.loadImage.showAvatar);
+    window.loadImage.photoHomeInput.removeEventListener('change', window.loadImage.showHomeImage);
   }
 
   setDefaultParameters();
